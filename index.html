@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1단계 진단 보고서 샘플 · 예시</title>
+<meta name="description" content="아동 용돈관리 앱(가상 서비스) 1단계 진단 보고서 샘플: 위험도 분류, 금융 데이터 권한, PortOne 결제 검증, Supabase 판단, 2단계 항목별 견적 형식">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23191F28'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='%23fff' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  color-scheme: light;
+  --brand:#1F6F5C; --brand-text:#17594A; --brand-tint:#ECF5F2;
+  --bg:#FFFFFF; --card:#FFFFFF; --soft:#F6F7F8; --line:#E5E8EB; --line-2:#EBEEF1;
+  --ink:#191F28; --ink-2:#4E5968; --mut:#636D7B;
+  --ok:#127A4F; --ok-bg:#E3F6ED; --ok-dot:#1FA971;
+  --warn:#7A5600; --warn-bg:#FFF3D4; --warn-dot:#F2B01E;
+  --high:#9A3B0B; --high-bg:#FFE9DC; --high-dot:#F07B3F;
+  --bad:#BF2930; --bad-bg:#FFE3E4; --bad-dot:#E5484D;
+  --neu:#4E5968; --neu-bg:#F0F2F5; --neu-dot:#8B95A1;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r-md:12px; --r-lg:18px; --r-xl:24px; --r-pill:999px;
+  --code-bg:#151A23; --code-ink:#E6EAF0; --code-mut:#8A94A6;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.65;word-break:keep-all;overflow-wrap:break-word}
+a{color:var(--brand-text)}
+.skip{position:absolute;left:-9999px;top:0}
+.skip:focus{left:16px;top:8px;z-index:20;background:#fff;padding:8px 12px;border-radius:8px}
+.band{background:var(--ink);color:#fff;font-size:13px;text-align:center;padding:8px 16px}
+.topbar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line-2)}
+.toc{max-width:880px;margin:0 auto;padding:10px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.toc::-webkit-scrollbar{display:none}
+.toc a{flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:var(--r-pill);color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:600}
+.toc a:hover{background:var(--soft);color:var(--ink)}
+.toc a[aria-current="true"]{background:var(--ink);color:#fff}
+a:focus-visible,button:focus-visible,input:focus-visible+span{outline:3px solid rgba(31,111,92,.35);outline-offset:2px}
+main{max-width:880px;margin:0 auto;padding:8px 16px 64px}
+.sheet{border-bottom:1px solid var(--line);padding:48px 0 44px}
+.sheet:last-of-type{border-bottom:0}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--mut);margin-bottom:20px}
+.sheet-head b{color:var(--ink-2);font-weight:600}
+.sample{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--r-pill);background:var(--warn-bg);color:var(--warn);font-weight:700;font-size:12px;white-space:nowrap}
+.sample.p{background:var(--brand-tint);color:var(--brand-text)}
+h1{font-size:40px;line-height:1.2;letter-spacing:-.025em;margin:0 0 12px;font-weight:800}
+h2{font-size:28px;line-height:1.3;letter-spacing:-.02em;margin:0 0 10px;font-weight:800}
+h3{font-size:17px;margin:32px 0 10px;font-weight:700}
+p{margin:0 0 12px}
+.lead{font-size:17px;color:var(--ink-2);margin-bottom:24px}
+.mut{color:var(--mut)} .small{font-size:13px}
+.meta{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin:24px 0 8px}
+.meta div{padding:14px 12px 14px 0}
+.meta dt{font-size:12px;color:var(--mut)}
+.meta dd{margin:2px 0 0;font-weight:700;font-size:15px}
+.sev-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0}
+.sev{border-radius:var(--r-lg);padding:18px;background:var(--soft)}
+.sev .n{font-size:42px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.sev .l{font-size:14px;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:6px}
+.sev .d{font-size:13px;color:var(--mut);margin-top:2px}
+.sev.crit{background:var(--bad-bg)} .sev.crit .n,.sev.crit .l{color:var(--bad)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+table{width:100%;border-collapse:collapse;font-size:14px}
+caption{text-align:left;font-size:13px;color:var(--mut);padding:10px 14px 8px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line-2);vertical-align:top}
+th{font-size:12px;color:var(--mut);font-weight:600;background:var(--soft)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tbl{overflow-x:auto;border:1px solid var(--line-2);border-radius:var(--r-md);margin:8px 0 16px}
+.tbl th:first-child,.tbl td:first-child{padding-left:14px}
+.id{font-family:var(--mono);font-size:12.5px;white-space:nowrap;color:var(--ink-2)}
+.tag{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--r-pill);font-size:12px;font-weight:700;white-space:nowrap}
+.t-bad{background:var(--bad-bg);color:var(--bad)} .t-high{background:var(--high-bg);color:var(--high)} .t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-ok{background:var(--ok-bg);color:var(--ok)} .t-neu{background:var(--neu-bg);color:var(--neu)} .t-br{background:var(--brand-tint);color:var(--brand-text)}
+.scope td:first-child{white-space:nowrap;font-weight:700}
+.f-top{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.plain{background:var(--brand-tint);border-radius:var(--r-lg);padding:20px 22px;margin:18px 0}
+.plain .k{font-size:13px;font-weight:700;color:var(--brand-text);margin-bottom:6px}
+.plain p{font-size:16px;margin:0 0 8px} .plain p:last-child{margin:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.box{border:1px solid var(--line-2);border-radius:var(--r-lg);padding:16px 18px}
+.box .k{font-size:12px;color:var(--mut);font-weight:600;margin-bottom:4px}
+.box b{font-size:15px}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 12px 38px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.code{background:var(--code-bg);color:var(--code-ink);border-radius:var(--r-md);margin:10px 0 16px;overflow:hidden}
+.code .cap{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 6px 6px 16px;font-size:12px;color:var(--code-mut);border-bottom:1px solid #262D3A;min-height:44px}
+.code pre{margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;white-space:pre}
+.code .c{color:var(--code-mut)} .code .s{color:#9FD3A8} .code .kw{color:#8FB4FF} .rf{color:#FF8A8A} .rp{color:#9FE3BE}
+.copy{min-height:44px;min-width:64px;padding:0 14px;border-radius:var(--r-pill);border:1px solid #39414F;background:transparent;color:#E6EAF0;font:600 12px var(--font);cursor:pointer}
+.copy:hover{background:#232A36}
+.copy.done{border-color:var(--ok-dot);color:#9FE3BE}
+.ev{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ev h4{margin:0 0 4px;font-size:14px}
+.ev .code pre{font-size:12px}
+.note{border-radius:var(--r-lg);background:var(--soft);padding:16px 18px;margin:16px 0;font-size:14px;color:var(--ink-2)}
+.note b{color:var(--ink)}
+.verdict{border:2px solid var(--ink);border-radius:var(--r-lg);padding:18px 20px;margin:16px 0}
+.verdict .k{font-size:12px;font-weight:700;color:var(--mut);margin-bottom:4px}
+.verdict b{font-size:17px}
+/* 견적 선택 */
+.qrow td:first-child{width:44px;padding-right:0}
+.chk{position:relative;display:inline-flex;width:44px;height:44px;align-items:center;justify-content:center;margin:-10px 0 -10px -10px;cursor:pointer}
+.chk input{position:absolute;opacity:0;width:44px;height:44px;margin:0;cursor:pointer}
+.chk span{width:20px;height:20px;border-radius:6px;border:2px solid #B0B8C1;display:block;background:#fff}
+.chk input:checked+span{background:var(--brand);border-color:var(--brand);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3.2L15 7' stroke='%23fff' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.chk input:disabled+span{opacity:.75}
+.qrow.off td:not(:first-child){color:var(--mut)}
+.qrow.off .tag{opacity:.55}
+.sumbar{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--ink);margin-top:4px}
+.sumbar div{padding:14px 12px 4px 0}
+.sumbar dt{font-size:12px;color:var(--mut)}
+.sumbar dd{margin:2px 0 0;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.sumbar .main dd{color:var(--brand-text)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
+.btn{min-height:44px;padding:0 16px;border-radius:var(--r-pill);border:1px solid var(--line);background:#fff;color:var(--ink);font:600 14px var(--font);cursor:pointer}
+.btn:hover{border-color:var(--ink-2)}
+.btn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.week{display:grid;grid-template-columns:130px 1fr;border-top:1px solid var(--line-2)}
+.week:last-of-type{border-bottom:1px solid var(--line-2)}
+.week .w{padding:14px 0;font-weight:800;font-size:15px}
+.week .w span{display:block;font-size:12px;color:var(--mut);font-weight:500}
+.week ul{margin:0;padding:14px 0 14px 18px}
+.week li{margin-bottom:4px}
+.milestone{display:inline-flex;align-items:center;margin-top:2px;padding:3px 10px;border-radius:var(--r-pill);background:var(--ink);color:#fff;font-size:12px;font-weight:700}
+.sub{font-size:13px;color:var(--mut);margin-top:2px}
+.total td{font-weight:800;font-size:16px;background:var(--soft)}
+.foot{font-size:12px;color:var(--mut);margin-top:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:720px){
+  h1{font-size:29px} h2{font-size:22px}
+  .sheet{padding:36px 0 32px}
+  .meta{grid-template-columns:1fr 1fr}
+  .sev-row{grid-template-columns:1fr 1fr}
+  .sev .n{font-size:34px}
+  .two,.ev{grid-template-columns:1fr}
+  .week{grid-template-columns:1fr}
+  .week .w{padding-bottom:0}
+  .week ul{padding-top:6px}
+  .sumbar dd{font-size:18px}
+  .hide-m{display:none}
+  .sheet-head{flex-wrap:wrap}
+}
+@page{size:A4;margin:12mm}
+@media print{
+  body{font-size:10.5pt}
+  .band,.topbar,.copy,.btnrow{display:none}
+  main{max-width:none;padding:0}
+  .sheet{break-after:page;border:0;padding:0}
+  .code,.box,.sev,.plain,.tbl tr,.week,.verdict{break-inside:avoid}
+  .code{background:#fff;color:#111;border:1px solid #ccc}
+  .code pre{white-space:pre-wrap;font-size:8.5pt}
+  .code .c{color:#666} .code .s{color:#1d6b33} .code .kw{color:#17594A} .rf{color:#BF2930;font-weight:700} .rp{color:#127A4F;font-weight:700}
+  .sev,.plain,.tag,th,.total td,.sample,.milestone,ol.steps li::before{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문으로 건너뛰기</a>
+<div class="band" role="note">제안용 샘플 · 화면 모형(서버 없음) · 가상의 아동 용돈관리 앱 '새싹지갑'을 가정했고, 발견 내용·숫자는 모두 예시예요.</div>
+
+<div class="topbar">
+<nav class="toc" aria-label="목차">
+  <a href="#summary">결과 요약</a>
+  <a href="#finding">발견 상세</a>
+  <a href="#payment">결제 검증</a>
+  <a href="#backend">Supabase 판단</a>
+  <a href="#quote">2단계 견적 형식</a>
+  <a href="#plan">1단계 진행 방법</a>
+</nav>
+</div>
+
+<main id="main">
+
+<!-- 1. 요약 -->
+<section class="sheet" id="summary" aria-labelledby="h-summary">
+  <div class="sheet-head"><span><b>1단계 종합 진단 보고서</b> · 결과 요약</span><span class="sample">예시</span></div>
+  <h1 id="h-summary">새싹지갑 1단계 진단<br>운영 안정화를 위한 위험도별 결과</h1>
+  <p class="lead">무엇이 돈과 아이 정보에 바로 닿는지, 무엇은 출시 뒤에 고쳐도 되는지 먼저 나눴습니다. 문제마다 재현 방법, 원인, 고치는 방향, 2단계에서 드는 인일을 함께 적습니다.</p>
+
+  <dl class="meta">
+    <div><dt>대상</dt><dd>새싹지갑 (가상)</dd></div>
+    <div><dt>범위</dt><dd>앱·웹·관리자 / 1~6</dd></div>
+    <div><dt>진단 기간</dt><dd>10영업일</dd></div>
+    <div><dt>판</dt><dd>1차 v1.0 (예시)</dd></div>
+  </dl>
+  <p class="small mut">시험 환경(스테이징)과 점검용 부모·자녀·관리자 계정으로만 수행 · 운영 DB는 읽기 전용 확인만 · 실제 돈이 오가는 결제 없음 · 공인 보안진단·인증 아님</p>
+
+  <h3>발견한 문제 17건 (예시)</h3>
+  <div class="sev-row">
+    <div class="sev crit"><div class="n">2</div><div class="l"><i class="dot" style="background:var(--bad-dot)"></i>긴급</div><div class="d">돈·아이 정보에 바로 닿음. 발견 다음 영업일에 먼저 알림</div></div>
+    <div class="sev"><div class="n">4</div><div class="l"><i class="dot" style="background:var(--high-dot)"></i>높음</div><div class="d">조건이 있지만 피해가 큼. 2단계 첫 주</div></div>
+    <div class="sev"><div class="n">6</div><div class="l"><i class="dot" style="background:var(--warn-dot)"></i>보통</div><div class="d">Android 정식 출시 전</div></div>
+    <div class="sev"><div class="n">5</div><div class="l"><i class="dot" style="background:var(--neu-dot)"></i>낮음</div><div class="d">권고, 여유 있을 때</div></div>
+  </div>
+
+  <h3>문제 목록 (일부)</h3>
+  <div class="tbl"><table>
+    <caption>번호 앞 글자가 업무 범위 영역입니다. 인일은 2단계 수정·재검증에 드는 예상치입니다.</caption>
+    <thead><tr><th scope="col">번호</th><th scope="col">무엇이 문제인가요</th><th scope="col">위험도</th><th scope="col" class="num">2단계 인일</th></tr></thead>
+    <tbody>
+      <tr><td class="id">보안-02</td><td>자녀 계정이 자기 지갑 잔액을 직접 바꿀 수 있음</td><td><span class="tag t-bad">긴급</span></td><td class="num">2.0</td></tr>
+      <tr><td class="id">결제-01</td><td>같은 웹훅이 두 번 오면 구독 기간이 두 번 늘어남</td><td><span class="tag t-bad">긴급</span></td><td class="num">1.5</td></tr>
+      <tr><td class="id">기능-04</td><td>이자 지급과 미리쓰기 상환이 같은 순간에 돌면 잔액이 어긋남</td><td><span class="tag t-high">높음</span></td><td class="num">2.0</td></tr>
+      <tr><td class="id">보안-05</td><td>탈퇴한 자녀의 프로필 사진이 저장소에 공개 주소로 남음</td><td><span class="tag t-high">높음</span></td><td class="num">1.0</td></tr>
+      <tr><td class="id">출시-02</td><td>스토어 출시 버전과 GitHub main의 결제 화면 코드가 다름</td><td><span class="tag t-warn">보통</span></td><td class="num">0.5</td></tr>
+      <tr><td class="id">UX-03</td><td>'미리쓰기' 안내에 상환일·이자 문구가 없어 부모가 오해할 수 있음</td><td><span class="tag t-warn">보통</span></td><td class="num">1.0</td></tr>
+      <tr><td class="mut" colspan="4">외 11건. 이 샘플에는 보안-02만 자세히 실었고, 실제 보고서에는 모든 건이 같은 형식으로 들어갑니다.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>업무 범위 1~6 중 1단계에서 보는 곳</h3>
+  <p class="small mut">10영업일이라 전수 QA가 아니라, 돈·아이 정보에 닿는 흐름을 위험 순으로 먼저 봅니다.</p>
+  <div class="tbl"><table class="scope">
+    <thead><tr><th scope="col">영역</th><th scope="col">1단계에서 하는 일</th><th scope="col">깊이</th></tr></thead>
+    <tbody>
+      <tr><td>1 기능 품질</td><td>소스·구조 분석, 부모·자녀·관리자 QA, 용돈·저축·이자·미리쓰기·상환·미션·정산 계산과 동시처리</td><td><span class="tag t-ok">핵심 흐름</span></td></tr>
+      <tr><td>2 보안·개인정보</td><td>로그인·권한(RLS·함수·Storage) 직접 호출 검사, 탈퇴·삭제·보존 흐름, 부모 동의 기록 확인</td><td><span class="tag t-ok">핵심 흐름</span></td></tr>
+      <tr><td>3 결제·구독</td><td>사용 중인 PortOne 버전 확인 후 테스트 환경에서 신청·갱신·실패·중복·취소·환불, 웹훅 예외, 결제 조회로 금액 대조</td><td><span class="tag t-ok">핵심 흐름</span></td></tr>
+      <tr><td>4 기획·UI/UX</td><td>부모·자녀 주요 흐름과 온보딩, 금융 안내 문구, 화면 일관성 개선 제안</td><td><span class="tag t-ok">핵심 흐름</span></td></tr>
+      <tr><td>5 출시·운영</td><td>실기기(iOS·Android) 확인, 출시 버전↔소스 대조, 로그·백업 현황</td><td><span class="tag t-warn">현황 진단</span></td></tr>
+      <tr><td>6 인프라</td><td>Supabase 유지 vs 별도 백엔드 판단, AWS 이관 시 바뀌는 곳 목록</td><td><span class="tag t-warn">판단·목록</span></td></tr>
+      <tr><td class="mut">범위 밖</td><td class="mut">공인 침투테스트·인증, 아동 개인정보 법률 자문(법률 검토가 필요한 곳은 표시만), 신규 금융서비스</td><td><span class="tag t-neu">제외</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="foot"><span>새싹지갑 1단계 진단 보고서 (예시)</span><span>가상 예시 · 실제 수행 결과 아님</span></div>
+</section>
+
+<!-- 2. 발견 상세 -->
+<section class="sheet" id="finding" aria-labelledby="h-finding">
+  <div class="sheet-head"><span><b>보안-02</b> · 발견 상세와 고치는 방법</span><span class="sample">예시</span></div>
+  <div class="f-top">
+    <span class="tag t-bad">긴급</span>
+    <span class="tag t-neu">보안 · 표 권한(RLS)</span>
+    <span class="tag t-neu">자녀 앱 · 내 지갑</span>
+    <span class="tag t-ok">2단계 재검증 통과</span>
+  </div>
+  <h2 id="h-finding">자녀 계정이 자기 지갑 잔액을 직접 바꿀 수 있어요</h2>
+
+  <div class="plain">
+    <div class="k">쉽게 말하면</div>
+    <p>자녀 앱에는 잔액을 고치는 버튼이 없지만, 앱이 쓰는 공개 키와 자녀 로그인 토큰이면 지갑 표에 직접 '잔액 = 100만 원'을 보낼 수 있습니다.</p>
+    <p>지갑 표의 수정 규칙이 "본인 지갑이면 수정 가능"으로만 되어 있고, 어떤 칸을 고칠 수 있는지는 막지 않았기 때문입니다.</p>
+  </div>
+
+  <div class="two">
+    <div class="box"><div class="k">어떤 피해가 생기나요</div><b>잔액·이자·미리쓰기 한도가 실제 거래와 어긋나요.</b><p class="small mut" style="margin:4px 0 0">정산과 카드 충전이 이 잔액을 믿고 움직이면 실제 돈 문제로 번집니다.</p></div>
+    <div class="box"><div class="k">왜 긴급인가요</div><b>로그인한 자녀 누구나, 몇 분이면 돼요.</b><p class="small mut" style="margin:4px 0 0">부모가 믿고 쓰는 금융 기록이라 신뢰에 바로 닿습니다.</p></div>
+  </div>
+
+  <h3>재현 방법</h3>
+  <ol class="steps">
+    <li>스테이징에 점검용 부모 1, 자녀 A·B 계정을 만들고 자녀 A에게 용돈 5,000원을 지급합니다.</li>
+    <li>자녀 A로 로그인해 토큰을 받고, 아래 요청을 보냅니다.</li>
+    <li>기대: 거부. 실제: 잔액이 1,000,000원으로 바뀌고 거래 내역에는 아무 기록이 없음.</li>
+  </ol>
+  <div class="code"><div class="cap"><span>재현 · 터미널 (curl)</span><button class="copy" type="button" aria-label="재현 명령 복사">복사</button></div><pre><span class="c"># 자녀 A 토큰으로 자기 지갑 잔액을 직접 수정</span>
+curl -s -X PATCH "$SUPABASE_URL/rest/v1/wallets?child_id=eq.$CHILD_A" \
+  -H "apikey: $ANON_KEY" -H "Authorization: Bearer $CHILD_A_TOKEN" \
+  -H "Content-Type: application/json" -H "Prefer: return=representation" \
+  -d <span class="s">'{"balance":1000000}'</span>
+<span class="c"># 결과 (예시) — HTTP 200</span>
+[{"child_id":"c-A","balance":1000000,"updated_at":"..."}]</pre></div>
+
+  <h3>원인</h3>
+  <div class="code"><div class="cap"><span>지금 정책 · supabase/migrations/…_wallets.sql</span><button class="copy" type="button" aria-label="지금 정책 복사">복사</button></div><pre><span class="kw">create policy</span> wallets_update <span class="kw">on</span> public.wallets
+  <span class="kw">for update using</span> (child_id = auth.uid());   <span class="c">-- 본인이면 모든 칸 수정 가능</span></pre></div>
+
+  <h3>고치는 방향</h3>
+  <ol class="steps">
+    <li>자녀·부모 계정에서 지갑 표의 직접 수정 권한을 뺍니다. 잔액은 화면이 아니라 거래 기록으로만 바뀌게 합니다.</li>
+    <li>용돈 지급·저축·이자·미리쓰기·상환은 DB 함수 하나씩으로 모읍니다. 함수 안에서 부모-자녀 관계를 auth.uid()로 확인하고, 거래 기록과 잔액 변경을 한 트랜잭션에서 처리합니다.</li>
+    <li>매일 1회 '거래 합계 = 잔액'을 대조하는 검사를 두고, 어긋나면 관리자에게 알립니다.</li>
+  </ol>
+
+  <h3>고치기 전후 같은 검사</h3>
+  <div class="ev">
+    <div><h4>1단계 진단 때</h4>
+      <div class="code"><div class="cap"><span>scripts/check-wallet.mjs 결과</span></div><pre>보안-02  자녀A 본인 잔액 수정   기대 거부  <span class="rf">실패</span>
+보안-02  자녀A → 자녀B 잔액     기대 거부  <span class="rp">통과</span>
+보안-02  부모 → 자기 자녀 잔액  기대 거부  <span class="rf">실패</span>
+보안-02  거래 합계 = 잔액       기대 일치  <span class="rf">실패</span></pre></div></div>
+    <div><h4>2단계 수정 뒤</h4>
+      <div class="code"><div class="cap"><span>scripts/check-wallet.mjs 결과</span></div><pre>보안-02  자녀A 본인 잔액 수정   기대 거부  <span class="rp">통과</span>
+보안-02  자녀A → 자녀B 잔액     기대 거부  <span class="rp">통과</span>
+보안-02  부모 → 자기 자녀 잔액  기대 거부  <span class="rp">통과</span>
+보안-02  거래 합계 = 잔액       기대 일치  <span class="rp">통과</span></pre></div></div>
+  </div>
+  <p class="small mut">검사는 스크립트로 남겨 대표님도 같은 명령으로 다시 돌릴 수 있게 드립니다. AI 코딩 도구로 계속 고치시는 상황이라, 고친 뒤 '실패'가 다시 생기지 않는지 확인하는 용도입니다.</p>
+
+  <div class="foot"><span>새싹지갑 1단계 진단 보고서 (예시)</span><span>가상 예시 · 실제 수행 결과 아님</span></div>
+</section>
+
+<!-- 3. 결제 -->
+<section class="sheet" id="payment" aria-labelledby="h-payment">
+  <div class="sheet-head"><span><b>결제·구독 검증 결과서</b> · PortOne 테스트 환경</span><span class="sample">예시</span></div>
+  <h2 id="h-payment">결제는 '화면에서 성공'이 아니라 '서버 기록이 맞는지'로 봅니다</h2>
+  <p>테스트 채널에서 시나리오마다 결제를 일으키고, 앱 화면·DB 구독 기록·PortOne 결제 내역 세 곳이 같은지 대조합니다. 웹훅은 같은 요청을 다시 보내거나 순서를 바꿔 보냅니다.</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th scope="col">시나리오</th><th scope="col">확인한 것</th><th scope="col">결과</th></tr></thead>
+    <tbody>
+      <tr><td>정기구독 첫 결제</td><td>결제 조회로 금액·상태 재확인 후 구독 시작</td><td><span class="tag t-ok">통과</span></td></tr>
+      <tr><td>같은 웹훅 2번 수신</td><td>결제 번호 기준으로 한 번만 처리되는지</td><td><span class="tag t-bad">실패 · 결제-01</span></td></tr>
+      <tr><td>웹훅 서명 없는 요청 (V2)</td><td>서명 검증 없이 처리하는지</td><td><span class="tag t-ok">통과</span></td></tr>
+      <tr><td>금액을 바꾼 결제 요청</td><td>서버가 상품 금액과 대조하는지</td><td><span class="tag t-ok">통과</span></td></tr>
+      <tr><td>갱신 실패 (카드 한도)</td><td>재시도·유예 기간·부모 알림</td><td><span class="tag t-high">주의 · 알림 없음</span></td></tr>
+      <tr><td>결제 중 앱 종료 후 복귀</td><td>결제는 됐는데 구독이 안 열리는 경우</td><td><span class="tag t-warn">주의</span></td></tr>
+      <tr><td>해지 · 환불</td><td>남은 기간 처리, 부분 환불 기록, 관리자 화면 표시</td><td><span class="tag t-ok">통과</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><b>실금전 이동</b> · 카드 연동·충전은 제휴가 확정된 범위의 흐름과 기록만 봅니다. 실제 돈이 움직이는 시험은 대표님 승인 후 소액 1건으로 한정합니다.</div>
+
+  <div class="foot"><span>새싹지갑 결제·구독 검증 (예시)</span><span>가상 예시 · 실제 수행 결과 아님</span></div>
+</section>
+
+<!-- 4. Supabase 판단 -->
+<section class="sheet" id="backend" aria-labelledby="h-backend">
+  <div class="sheet-head"><span><b>인프라 판단</b> · 2단계 견적 전에 정할 것</span><span class="sample">예시</span></div>
+  <h2 id="h-backend">Supabase 유지 vs 별도 백엔드</h2>
+  <p>"무엇이 더 좋은가"가 아니라, 지금 문제를 Supabase 안에서 고칠 수 있는지로 판단합니다. 아래 기준마다 진단에서 본 사실을 적고, 한쪽으로 기울면 이유를 남깁니다.</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th scope="col">기준</th><th scope="col">진단에서 본 것 (예시)</th><th scope="col">기울기</th></tr></thead>
+    <tbody>
+      <tr><td>금융 로직 위치</td><td>잔액 계산이 앱 화면 코드와 DB에 나뉘어 있음. DB 함수로 모으면 해결 가능</td><td><span class="tag t-br">유지</span></td></tr>
+      <tr><td>권한 구조</td><td>RLS로 표현 가능한 관계(부모-자녀)뿐. 정책 정리로 해결</td><td><span class="tag t-br">유지</span></td></tr>
+      <tr><td>결제 웹훅·배치</td><td>Edge Function과 예약 작업으로 처리 가능. 처리량이 작음</td><td><span class="tag t-br">유지</span></td></tr>
+      <tr><td>외부 금융 제휴 요건</td><td>제휴사가 망 분리·특정 클라우드를 요구하면 별도 서버 필요 (확인 필요)</td><td><span class="tag t-neu">미정</span></td></tr>
+      <tr><td>운영·비용</td><td>1인 운영에서 서버를 직접 두면 관리 부담이 커짐</td><td><span class="tag t-br">유지</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="verdict"><div class="k">예시 결론</div><b>지금은 Supabase 유지 + 금융 로직을 DB 함수로 모으기.</b><p class="small mut" style="margin:6px 0 0">제휴사 요건이 확인되면 그 부분만 다시 판단합니다. 별도 백엔드가 맞는다는 근거가 나오면 그대로 적고, 그 경우 2단계 견적이 커지는 이유도 함께 적습니다.</p></div>
+
+  <h3>AWS로 옮길 때 바뀌는 곳 (점검 목록)</h3>
+  <div class="tbl"><table>
+    <tbody>
+      <tr><td>Next.js 배포</td><td>지금 배포 방식에서 Vercel에 묶인 기능(예약 작업, 함수 설정, 환경 변수 등)이 있는지 확인하고 바뀌는 것만 셈</td></tr>
+      <tr><td>주소가 바뀌는 곳</td><td>PortOne 웹훅 주소, 로그인 리디렉트, 앱 딥링크, CORS, Capacitor 앱이 부르는 API 주소</td></tr>
+      <tr><td>DB를 옮길 경우</td><td>로그인(Auth) 사용자·비밀번호 해시, RLS가 하던 권한을 서버 코드로 옮기는 범위, Storage 파일</td></tr>
+      <tr><td>운영</td><td>로그·알림·백업 주기, 비밀 키 보관 위치</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="foot"><span>새싹지갑 인프라 판단 (예시)</span><span>가상 예시 · 실제 수행 결과 아님</span></div>
+</section>
+
+<!-- 5. 2단계 견적 형식 -->
+<section class="sheet" id="quote" aria-labelledby="h-quote">
+  <div class="sheet-head"><span><b>2단계 항목별 견적</b> · 고를 수 있는 형식</span><span class="sample">예시</span></div>
+  <h2 id="h-quote">고칠 항목을 골라 2단계 범위를 정합니다</h2>
+  <p>긴급·높음은 기본으로 넣고, 보통·낮음은 대표님이 직접 고치실지 맡기실지 고르시면 됩니다. 직접 고치실 항목에는 원인·수정 방향·재검사 스크립트를 드립니다.</p>
+
+  <div class="btnrow" role="group" aria-label="빠른 선택">
+    <button class="btn" type="button" data-preset="must" aria-pressed="true">긴급·높음만</button>
+    <button class="btn" type="button" data-preset="launch" aria-pressed="false">출시 전 권장</button>
+    <button class="btn" type="button" data-preset="all" aria-pressed="false">전체</button>
+  </div>
+
+  <div class="tbl"><table id="qtable">
+    <caption>1인일 40만 원(공급가) 기준 예시 단가. 실제 단가와 인일은 진단 결과로 정합니다. 흐린 체크는 빠질 수 없는 항목(긴급·최종 재검증)입니다.</caption>
+    <thead><tr><th scope="col"><span class="hide-m">포함</span></th><th scope="col">항목</th><th scope="col">위험도</th><th scope="col" class="num">인일</th></tr></thead>
+    <tbody>
+      <tr class="qrow" data-d="2" data-lv="must"><td><label class="chk"><input type="checkbox" checked disabled aria-label="보안-02 포함 (필수)"><span></span></label></td><td>보안-02 잔액 직접 수정 차단, 거래 함수로 모으기<div class="sub">정책·함수·대조 검사·재검증</div></td><td><span class="tag t-bad">긴급</span></td><td class="num">2.0</td></tr>
+      <tr class="qrow" data-d="1.5" data-lv="must"><td><label class="chk"><input type="checkbox" checked disabled aria-label="결제-01 포함 (필수)"><span></span></label></td><td>결제-01 웹훅 중복 처리<div class="sub">결제 번호 기준 한 번만 처리, 순서 뒤바뀜 대응</div></td><td><span class="tag t-bad">긴급</span></td><td class="num">1.5</td></tr>
+      <tr class="qrow" data-d="2" data-lv="must"><td><label class="chk"><input type="checkbox" checked aria-label="기능-04 포함"><span></span></label></td><td>기능-04 이자·상환 동시처리<div class="sub">잠금·순서 정리, 경계값 테스트</div></td><td><span class="tag t-high">높음</span></td><td class="num">2.0</td></tr>
+      <tr class="qrow" data-d="1" data-lv="must"><td><label class="chk"><input type="checkbox" checked aria-label="보안-05 포함"><span></span></label></td><td>보안-05 탈퇴 시 파일·개인정보 삭제<div class="sub">보존 기간 정책은 대표님 결정 사항</div></td><td><span class="tag t-high">높음</span></td><td class="num">1.0</td></tr>
+      <tr class="qrow" data-d="1.5" data-lv="must"><td><label class="chk"><input type="checkbox" checked aria-label="결제-03 포함"><span></span></label></td><td>결제-03 갱신 실패 재시도·부모 알림</td><td><span class="tag t-high">높음</span></td><td class="num">1.5</td></tr>
+      <tr class="qrow" data-d="0.5" data-lv="launch"><td><label class="chk"><input type="checkbox" aria-label="출시-02 포함"><span></span></label></td><td>출시-02 출시 버전↔소스 맞추기, 버전 태그</td><td><span class="tag t-warn">보통</span></td><td class="num">0.5</td></tr>
+      <tr class="qrow" data-d="1" data-lv="launch"><td><label class="chk"><input type="checkbox" aria-label="UX-03 포함"><span></span></label></td><td>UX-03 미리쓰기·이자 안내 문구와 화면</td><td><span class="tag t-warn">보통</span></td><td class="num">1.0</td></tr>
+      <tr class="qrow" data-d="2" data-lv="launch"><td><label class="chk"><input type="checkbox" aria-label="UX-01 포함"><span></span></label></td><td>UX-01 부모 온보딩 단계 줄이기<div class="sub">주요 화면 디자인 수정·원본 파일 포함</div></td><td><span class="tag t-warn">보통</span></td><td class="num">2.0</td></tr>
+      <tr class="qrow" data-d="1.5" data-lv="launch"><td><label class="chk"><input type="checkbox" aria-label="운영-01 포함"><span></span></label></td><td>운영-01 오류 로그·알림, 백업 확인 절차</td><td><span class="tag t-warn">보통</span></td><td class="num">1.5</td></tr>
+      <tr class="qrow" data-d="2" data-lv="all"><td><label class="chk"><input type="checkbox" aria-label="낮음 5건 포함"><span></span></label></td><td>낮음 5건 묶음<div class="sub">문구·일관성·작은 화면 오류</div></td><td><span class="tag t-neu">낮음</span></td><td class="num">2.0</td></tr>
+      <tr class="qrow" data-d="2" data-lv="fixed"><td><label class="chk"><input type="checkbox" checked disabled aria-label="최종 QA·재검증·인수인계 포함 (필수)"><span></span></label></td><td>최종 QA·보안 재검증·인수인계 문서<div class="sub">회귀 테스트, 재검증 결과서, 운영 문서</div></td><td><span class="tag t-neu">공통</span></td><td class="num">2.0</td></tr>
+    </tbody>
+  </table></div>
+
+  <dl class="sumbar" aria-live="polite">
+    <div><dt>선택 인일</dt><dd id="s-days">10.0일</dd></div>
+    <div><dt>예상 기간</dt><dd id="s-weeks">약 3주</dd></div>
+    <div class="main"><dt>공급가 (부가세 별도)</dt><dd id="s-sum">4,000,000원</dd></div>
+  </dl>
+  <p class="small mut" style="margin-top:8px">하루 1인일, 주 4인일 작업과 대표님 확인 시간을 넣어 기간을 셉니다. 진단에서 나오지 않은 새 요구는 이 표에 한 줄을 더해 따로 견적합니다.</p>
+
+  <div class="foot"><span>2단계 견적 형식 (예시)</span><span>가상 예시 · 실제 수행 결과 아님</span></div>
+</section>
+
+<!-- 6. 1단계 진행 -->
+<section class="sheet" id="plan" aria-labelledby="h-plan">
+  <div class="sheet-head"><span><b>여기부터 제안</b> · 1단계 진행 방법</span><span class="sample p">제안</span></div>
+  <h2 id="h-plan">1단계 진단 10영업일</h2>
+
+  <div class="week"><div class="w">1~2일<span>준비</span></div><ul>
+    <li>GitHub 읽기 권한, Supabase 스테이징, PortOne 테스트 채널, 테스트 앱(TestFlight·Android 내부 테스트) 받기</li>
+    <li>PRD·기능명세·ERD와 실제 화면·DB 차이표 만들기, 점검용 부모·자녀·관리자 계정</li>
+  </ul></div>
+  <div class="week"><div class="w">3~6일<span>보안·결제·금융 계산</span></div><ul>
+    <li>권한별 직접 호출 검사(표·함수·파일), 탈퇴·삭제·보존 흐름</li>
+    <li>PortOne 시나리오, 웹훅 중복·순서·서명</li>
+    <li>용돈·저축·이자·미리쓰기·상환·정산 계산과 동시처리</li>
+    <li>긴급 문제는 발견 다음 영업일에 먼저 전달</li>
+  </ul></div>
+  <div class="week"><div class="w">7~8일<span>QA·UX·출시</span></div><ul>
+    <li>부모·자녀·관리자 흐름 QA, 실기기 iOS·Android</li>
+    <li>온보딩·금융 안내 문구·화면 일관성 개선 제안</li>
+    <li>출시 버전↔소스 대조, 로그·백업 현황</li>
+  </ul></div>
+  <div class="week"><div class="w">9~10일<span>보고</span></div><ul>
+    <li>Supabase 유지 vs 별도 백엔드 판단, AWS 이관 수정 영역</li>
+    <li><span class="milestone">종합 진단 보고서 · QA 오류 목록 · 보안·결제 검증 결과서 · 2단계 항목별 견적</span></li>
+    <li>원격 설명 회의 1회</li>
+  </ul></div>
+
+  <h3>1단계 견적</h3>
+  <div class="tbl"><table>
+    <thead><tr><th scope="col">항목</th><th scope="col" class="num">인일</th><th scope="col" class="num">금액(원)</th></tr></thead>
+    <tbody>
+      <tr><td>준비·문서↔실제 차이표</td><td class="num">1.5</td><td class="num">270,000</td></tr>
+      <tr><td>보안·개인정보 권한 검사</td><td class="num">2.5</td><td class="num">450,000</td></tr>
+      <tr><td>결제·구독·금융 계산</td><td class="num">2.5</td><td class="num">450,000</td></tr>
+      <tr><td>기능 QA·UI/UX·출시 현황</td><td class="num">2.0</td><td class="num">360,000</td></tr>
+      <tr><td>인프라 판단·보고서·2단계 견적</td><td class="num">1.5</td><td class="num">270,000</td></tr>
+      <tr class="total"><td>공급가 (부가세 별도)</td><td class="num">10.0</td><td class="num">1,800,000</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small mut">1단계만 계약하셔도 보고서·검사 스크립트·견적표는 모두 드립니다. 2단계를 다른 곳에 맡기셔도 그대로 쓰실 수 있는 형식입니다.</p>
+
+  <div class="foot"><span>1단계 진행 방법 (제안)</span><span>가상 예시 · 실제 수행 결과 아님</span></div>
+</section>
+
+</main>
+<script>
+(function(){
+  function fallback(t){try{var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}catch(e){}}
+  document.querySelectorAll('.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      var pre=b.closest('.code').querySelector('pre'); if(!pre) return;
+      var t=pre.innerText;
+      var ok=function(){b.textContent='복사됨';b.classList.add('done');setTimeout(function(){b.textContent='복사';b.classList.remove('done')},1600)};
+      if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(ok,function(){fallback(t);ok()})}else{fallback(t);ok()}
+    });
+  });
+
+  var RATE=400000;
+  var rows=[].slice.call(document.querySelectorAll('.qrow'));
+  var btns=[].slice.call(document.querySelectorAll('[data-preset]'));
+  function won(n){return n.toLocaleString('ko-KR')+'원'}
+  function calc(){
+    var d=0;
+    rows.forEach(function(r){var c=r.querySelector('input');r.classList.toggle('off',!c.checked);if(c.checked)d+=parseFloat(r.dataset.d)});
+    document.getElementById('s-days').textContent=d.toFixed(1)+'일';
+    document.getElementById('s-weeks').textContent='약 '+Math.max(1,Math.ceil(d/4))+'주';
+    document.getElementById('s-sum').textContent=won(Math.round(d*RATE));
+  }
+  var order={must:1,launch:2,all:3,fixed:0};
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var lim=order[b.dataset.preset];
+      rows.forEach(function(r){var c=r.querySelector('input');if(!c.disabled)c.checked=order[r.dataset.lv]<=lim});
+      btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+      calc();
+    });
+  });
+  rows.forEach(function(r){r.querySelector('input').addEventListener('change',function(){btns.forEach(function(x){x.setAttribute('aria-pressed','false')});calc()})});
+  calc();
+
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){var on=a.getAttribute('href')==='#'+e.target.id;a.setAttribute('aria-current',on?'true':'false');if(on){var t=a.parentNode;t.scrollLeft=Math.max(0,a.offsetLeft-t.clientWidth/2+a.offsetWidth/2)}})}})},{rootMargin:'-40% 0px -55% 0px'});
+    document.querySelectorAll('main .sheet').forEach(function(s){io.observe(s)});
+  }
+})();
+</script>
+</body>
+</html>
